@@ -25,7 +25,7 @@ class Users(Base):
     password = Column("password",String, nullable=False)
     created_at = Column(DateTime,default=datetime.now)
 
-    def __init__(self,name,email,password,created_at):
+    def __init__(self,name,email,password,created_at=datetime.now()):
         self.name = name
         self.email = email
         self.password = password
