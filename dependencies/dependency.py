@@ -1,5 +1,5 @@
 from sqlalchemy.orm import sessionmaker
-from models.model import db
+from models.user_model import db
 
 
 def get_session():

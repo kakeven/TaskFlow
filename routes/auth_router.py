@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from models.model import Users
+from models.user_model import Users
 from dependencies.dependency import get_session
 from dotenv import load_dotenv
 import os
