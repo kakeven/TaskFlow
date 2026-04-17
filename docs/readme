@@ -7,5 +7,5 @@ API de gerenciamento de tarefas com regras de produtividade.
 - docs/taskflow-frontend-requisitos.pdf → Frontend
 - docs/taskflow-docker-deploy.pdf → Deploy
 
-## Como rodar
-docker compose up --build
+Cada documenta explica a ideia, os RF, RNF e RN, foram feitos para auxiliar na criação do programa.
+O deploy ainda não esta disponivel, so estará quando o projeto for finalizado.
