@@ -1,0 +1,11 @@
+# TaskFlow
+
+API de gerenciamento de tarefas com regras de produtividade.
+
+## Documentação
+- docs/taskflow-requisitos-v2.pdf → API
+- docs/taskflow-frontend-requisitos.pdf → Frontend
+- docs/taskflow-docker-deploy.pdf → Deploy
+
+Cada documenta explica a ideia, os RF, RNF e RN, foram feitos para auxiliar na criação do programa.
+O deploy ainda não esta disponivel, so estará quando o projeto for finalizado.
