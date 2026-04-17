@@ -1,11 +1,8 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from models.user_model import Users
 from dependencies.dependency import get_session
-from dotenv import load_dotenv
-import os
-from passlib.context import CryptContext
-from schemas.user_schemas import User_schema
+from schemas.user_schemas import User_schema,User_schemaResponse
 from sqlalchemy.orm import Session
+from services.user_service import criar_user
 
 """
 200 OK — requisição bem sucedida  
@@ -23,27 +20,16 @@ from sqlalchemy.orm import Session
 """
 
 
-load_dotenv()
-
-SECRET_KEY=os.getenv("SECRET_KEY")
-
-bcrypt_context = CryptContext(schemes=["bcrypt"],deprecated="auto")
-
 auth_router = APIRouter(prefix="/auth",tags=["auth"])
 
 @auth_router.get("/")
 async def autenticar():
     return {"adwd"}
 
-@auth_router.post("/criar_conta")
+@auth_router.post("/criar_conta",response_model=User_schemaResponse)
 async def criar_conta(user_schema: User_schema , session: Session = Depends(get_session) ):
-    
-    user = session.query(Users).filter(Users.email==user_schema.email).first()
-    if user:
-        raise HTTPException(status_code=400,detail="Email ja cadastrado")
-    else: 
-        password_crypto = bcrypt_context.hash(user_schema.password)
-        new_user = Users(name=user_schema.name,email=user_schema.email,password=password_crypto)
-        session.add(new_user)
-        session.commit()
-        return {"mensagem":"User cadastrado com sucesso"}
+    try: 
+       return criar_user(user_schema,session)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+   

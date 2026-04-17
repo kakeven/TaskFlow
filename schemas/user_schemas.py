@@ -7,3 +7,10 @@ class User_schema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class User_schemaResponse(BaseModel):
+    name: str
+    email: str
+
+    class Config:
+        from_attributes = True

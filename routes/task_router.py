@@ -6,5 +6,5 @@ from schemas.task_schema import Task_schema
 task_router = APIRouter(prefix="/task",tags=["task"])
 
 @task_router.post("/criar")
-async def criar_pedido(task_schema: Task_schema,session: Session = Depends(get_session)):
+async def criar_tarefa(task_schema: Task_schema,session: Session = Depends(get_session)):
     ...
