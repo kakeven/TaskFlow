@@ -1,6 +1,6 @@
 from sqlalchemy import  Column,String,ForeignKey,Integer,Date,Enum as SQLenum
 from enum import Enum
-from database.conection import Base,declarative_base
+from database.conection import Base
 
 
 

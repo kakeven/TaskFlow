@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column,String,Integer,DateTime
+from sqlalchemy import Column,String,Integer,DateTime
 from database.conection import Base
 
 from datetime import datetime

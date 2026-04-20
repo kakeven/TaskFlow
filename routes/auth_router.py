@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from dependencies.dependency import get_session
-from schemas.user_schemas import User_schema,User_schemaResponse
+from schemas.user_schemas import User_schema,User_schemaResponse,Login_schema
 from sqlalchemy.orm import Session
-from services.user_service import criar_user
+from services.user_service import criar_user,login
 
 """
 200 OK — requisição bem sucedida  
@@ -18,7 +18,8 @@ from services.user_service import criar_user
 
 500 Internal Server Error — erro interno do servidor  
 """
-
+class CredenciaisInvalidas(Exception):
+    pass
 
 auth_router = APIRouter(prefix="/auth",tags=["auth"])
 
@@ -33,3 +34,10 @@ async def criar_conta(user_schema: User_schema , session: Session = Depends(get_
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
    
+
+@auth_router.post("/login")
+async def login_route(login_schema: Login_schema,session: Session=Depends(get_session)):
+    try:
+        return login(login_schema,session)
+    except CredenciaisInvalidas:
+        raise HTTPException(status_code=401,detail="Credenciais invalidas")
