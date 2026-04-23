@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from dependencies.dependency import get_session
 from schemas.user_schemas import User_schema,User_schemaResponse,Login_schema
 from sqlalchemy.orm import Session
-from services.user_service import criar_user,login
+from services.user_service import criar_user,login,CredenciaisInvalidas,verificar_token,criar_token
+from models.user_model import Users
+from fastapi.security import  OAuth2PasswordRequestForm
+
 
 """
 200 OK — requisição bem sucedida  
@@ -18,26 +21,36 @@ from services.user_service import criar_user,login
 
 500 Internal Server Error — erro interno do servidor  
 """
-class CredenciaisInvalidas(Exception):
-    pass
+
 
 auth_router = APIRouter(prefix="/auth",tags=["auth"])
 
-@auth_router.get("/")
-async def autenticar():
-    return {"adwd"}
 
 @auth_router.post("/criar_conta",response_model=User_schemaResponse)
 async def criar_conta(user_schema: User_schema , session: Session = Depends(get_session) ):
     try: 
        return criar_user(user_schema,session)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=409, detail=str(e))
    
 
 @auth_router.post("/login")
-async def login_route(login_schema: Login_schema,session: Session=Depends(get_session)):
+async def login_route( form_data: OAuth2PasswordRequestForm = Depends(),session: Session=Depends(get_session)):
     try:
-        return login(login_schema,session)
+        
+        return login(form_data,session)
     except CredenciaisInvalidas:
         raise HTTPException(status_code=401,detail="Credenciais invalidas")
+    
+
+
+
+@auth_router.get("/refresh")
+async def refresh_token(user:Users = Depends(verificar_token)):
+    access_token = criar_token(user.id)
+    return {
+        "access_token": access_token,
+        "token_type": "Bearer"
+    }
+    
+    

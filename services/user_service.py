@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from jose import JWTError,jwt
 from datetime import datetime,timedelta,timezone
+from dependencies.dependency import verificar_token
 
 class CredenciaisInvalidas(Exception):
     pass
@@ -17,18 +18,20 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 bcrypt_context = CryptContext(schemes=["bcrypt"],deprecated="auto")
 
-def criar_token(user_id):
+def criar_token(user_id,duracao=timedelta(minutes=ACESS_TOKEN_EXPIRE_MINUTES)):
     #JWT -> Json web token
-    data_exp = datetime.now(timezone.utc)+timedelta(minutes=ACESS_TOKEN_EXPIRE_MINUTES) 
+    data_exp = datetime.now(timezone.utc)+ duracao
     info={
-        "sub":user_id,
+        "sub":str(user_id),
         "exp":data_exp
     }
     encode_jwt = jwt.encode(info,SECRET_KEY,ALGORITHM)
     
     return encode_jwt
 
-def autenticar_user(email,password,session):
+
+
+def autenticar_user(email,password,session:Session):
     user = session.query(Users).filter(Users.email==email).first()
 
     if not user:
@@ -39,7 +42,6 @@ def autenticar_user(email,password,session):
 
     return user
     
-
 def criar_user(user_schema, session:Session):
     
     user = session.query(Users).filter(Users.email==user_schema.email).first()
@@ -54,12 +56,15 @@ def criar_user(user_schema, session:Session):
         return new_user
 
 def login(login_schema,session: Session):
-    user = autenticar_user(login_schema.email,login_schema.password,session)
+    user = autenticar_user(login_schema.username,login_schema.password,session)
     if user:
         acess_token=criar_token(user.id)
+        refresh_token = criar_token(user.id,duracao=timedelta(days=3))
         return {
             "access_token":acess_token,
-            "token_type":"Bearer"
+            "token_type":"Bearer",
+            "refresh_token":refresh_token
         }    
     else:
         raise ValueError ("usuario não encontrado e/ou credenciais invalidas")
+

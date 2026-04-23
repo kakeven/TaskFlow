@@ -23,3 +23,5 @@ class Login_schema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
