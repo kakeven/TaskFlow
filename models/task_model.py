@@ -14,6 +14,13 @@ class EnumStatus(str,Enum):
     in_progress = "in_progress" 
     done = "done"
 
+    def order(self):
+        return {
+            EnumStatus.pending: 1,
+            EnumStatus.in_progress: 2,
+            EnumStatus.done: 3
+        }[self]
+
 class Task(Base):
 
     __tablename__ = "tasks"

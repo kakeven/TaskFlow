@@ -49,11 +49,11 @@ async def editar_tarefa(id_task:int,task_schema:Task_schema_update,session:Sessi
     try:
         return editar_tarefa_id(id_task,session,user,task_schema)
     except ValueError as e:
-        raise HTTPException(status_code=400)
+        raise HTTPException(status_code=400,detail=str(e))
     
 @task_router.delete("{id_task}")
 async def excluir_tarefa(id_task:int,session:Session = Depends(get_session),user : Users=Depends(verificar_token)):
     try:
         return excluir_tarefa_id(id_task,session,user)
-    except:
-        HTTPException(status_code=404)
+    except ValueError as e:
+        HTTPException(status_code=404,detail=str(e))

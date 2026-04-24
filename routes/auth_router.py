@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from dependencies.dependency import get_session
-from schemas.user_schemas import User_schema,User_schemaResponse,Login_schema
+from schemas.user_schemas import User_schemaResponse
 from sqlalchemy.orm import Session
-from services.user_service import criar_user,login,CredenciaisInvalidas,verificar_token,criar_token
+from services.user_service import login,CredenciaisInvalidas,verificar_token,criar_token
 from models.user_model import Users
 from fastapi.security import  OAuth2PasswordRequestForm
 
@@ -26,12 +26,7 @@ from fastapi.security import  OAuth2PasswordRequestForm
 auth_router = APIRouter(prefix="/auth",tags=["auth"])
 
 
-@auth_router.post("/criar_conta",response_model=User_schemaResponse)
-async def criar_conta(user_schema: User_schema , session: Session = Depends(get_session) ):
-    try: 
-       return criar_user(user_schema,session)
-    except ValueError as e:
-        raise HTTPException(status_code=409, detail=str(e))
+
    
 
 @auth_router.post("/login")
