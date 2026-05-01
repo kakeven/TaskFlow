@@ -5,7 +5,9 @@ from fastapi import FastAPI
 from routes.auth_router import auth_router
 from routes.task_router import task_router
 from routes.user_route import user_router
+from database.conection import db, Base
 
+Base.metadata.create_all(bind=db)
 
 
 app = FastAPI()
