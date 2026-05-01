@@ -61,6 +61,8 @@ Crie um arquivo `.env` na raiz do projeto:
 ```env
 SECRET_KEY=sua_chave_secreta
 ALGORITHM=HS256
+
+# se for usar sqlite, não coloque essa variavel
 DATABASE_URL=postgresql://postgres:sua_senha@localhost:5432/taskflow
 ```
 
