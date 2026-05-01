@@ -113,4 +113,4 @@ docker run -p 8000:8000 --env-file .env taskflow
 
 ## 👨‍💻 Autor
 
-Feito por **Kauã** — [LinkedIn](#) · [GitHub](#)
+Feito por **Kauã** — [LinkedIn](https://www.linkedin.com/in/kakeven)
