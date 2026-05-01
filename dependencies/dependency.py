@@ -23,8 +23,16 @@ def get_session():
 
 def verificar_token(token:str = Depends(oauth2_scheme),session:Session = Depends(get_session)):
     try:
-        payload = jwt.decode(token, SECRET_KEY, ALGORITHM)
-        user_id = int(payload.get("sub"))
+        secret = SECRET_KEY
+        algorithm = ALGORITHM
+        if secret is None or algorithm is None:
+            raise HTTPException(status_code=401,detail=" Algoritimo ou chave invalidos")
+        payload = jwt.decode(token, secret, algorithm)
+        sub = payload.get("sub")
+        if sub is None:
+            raise HTTPException(status_code=401,detail="sub invalido")
+        user_id = int(sub)
+
     except JWTError:
         raise HTTPException(status_code=401, detail="Token inválido")
     user = session.query(Users).filter(Users.id == user_id).first()
