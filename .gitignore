@@ -3,4 +3,4 @@
 __pycache__/
 *.pyc
 *.db
-test_task_service.py
+.vscode

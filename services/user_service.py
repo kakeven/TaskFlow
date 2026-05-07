@@ -13,7 +13,7 @@ class CredenciaisInvalidas(Exception):
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
-ACESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACESS_TOKEN_EXPIRE_MINUTES"))
+ACESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACESS_TOKEN_EXPIRE_MINUTES"))# type: ignore
 ALGORITHM = os.getenv("ALGORITHM")
 
 bcrypt_context = CryptContext(schemes=["bcrypt"],deprecated="auto")
@@ -25,26 +25,26 @@ def criar_token(user_id,duracao=timedelta(minutes=ACESS_TOKEN_EXPIRE_MINUTES)):
         "sub":str(user_id),
         "exp":data_exp
     }
-    encode_jwt = jwt.encode(info,SECRET_KEY,ALGORITHM)
+    encode_jwt = jwt.encode(info,SECRET_KEY,ALGORITHM)# type: ignore
     
     return encode_jwt
 
 
 
 def autenticar_user(email,password,session:Session):
-    user = session.query(Users).filter(Users.email==email).first()
+    user = session.query(Users).filter(Users.email==email).first()# type: ignore
 
     if not user:
         raise CredenciaisInvalidas()
     
-    if not bcrypt_context.verify(password,user.password):
+    if not bcrypt_context.verify(password,user.password):# type: ignore
         raise CredenciaisInvalidas()
 
     return user
     
 def criar_user(user_schema, session:Session):
     
-    user = session.query(Users).filter(Users.email==user_schema.email).first()
+    user = session.query(Users).filter(Users.email==user_schema.email).first()# type: ignore
     if user:
         raise ValueError("Credencial invalida")
     else: 

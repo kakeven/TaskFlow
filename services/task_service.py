@@ -11,22 +11,23 @@ def criar_task(task_schema ,session:Session,user:Users):
     if task_schema.priority=="":
         raise ValueError("Obrigatorio ter priority")
     
+    user_id = user.id
 
     task_count = session.query(func.count(Task.id)).filter(
-            Task.user_id == user.id,
+            Task.user_id == user_id,# type: ignore
             or_(
-                Task.status == EnumStatus.in_progress,
-                Task.status == EnumStatus.pending
+                Task.status == EnumStatus.in_progress,# type: ignore
+                Task.status == EnumStatus.pending # type: ignore
             )
         ).scalar()
 
     task_high_count = session.query(func.count(Task.id)).filter(
-        Task.user_id == user.id,
-        Task.priority == EnumPriority.high
+        Task.user_id == user_id,# type: ignore
+        Task.priority == EnumPriority.high# type: ignore
         ).scalar()
 
     if task_count>=5:
-        raise ValueError("Complete outras tarefas primeiro")
+        raise ValueError("Limite de tarefas atingido")
     
     if task_schema.priority==EnumPriority.high and task_high_count>=2:
         raise ValueError("Limite de tarefas high atingido")
@@ -50,13 +51,13 @@ def criar_task(task_schema ,session:Session,user:Users):
 
 
 def ver_tarefas_listas(user,session:Session):
-    task = session.query(Task).filter(Task.user_id==user.id).all()
+    task = session.query(Task).filter(Task.user_id==user.id).all()# type: ignore
     if not task:
         raise ValueError("Nenhuma task criada")
     return task
 
 def ver_tarefa_id(id_task,session:Session,user):
-    task = session.query(Task).filter(Task.id==id_task, Task.user_id==user.id).first()
+    task = session.query(Task).filter(Task.id==id_task, Task.user_id==user.id).first()# type: ignore
     if not task:
         raise ValueError("Task não encontrada")
     return task
