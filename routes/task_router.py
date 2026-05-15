@@ -20,7 +20,7 @@ from models.user_model import Users
 500 Internal Server Error — erro interno do servidor  
 """
 
-task_router = APIRouter(prefix="/task",tags=["task"],dependencies=[Depends(verificar_token)])
+task_router = APIRouter(prefix="/task",tags=["task"])
 
 @task_router.post("/",status_code=201)
 async def criar_tarefa(task_schema: Task_schema,session: Session = Depends(get_session),user:Users = Depends(verificar_token)):
@@ -51,9 +51,9 @@ async def editar_tarefa(id_task:int,task_schema:Task_schema_update,session:Sessi
     except ValueError as e:
         raise HTTPException(status_code=400,detail=str(e))
     
-@task_router.delete("{id_task}")
+@task_router.delete("/{id_task}")
 async def excluir_tarefa(id_task:int,session:Session = Depends(get_session),user : Users=Depends(verificar_token)):
     try:
         return excluir_tarefa_id(id_task,session,user)
     except ValueError as e:
-        HTTPException(status_code=404,detail=str(e))
+        raise HTTPException(status_code=404,detail=str(e))

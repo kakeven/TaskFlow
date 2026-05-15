@@ -4,6 +4,7 @@ from models.user_model import Users
 from sqlalchemy import or_
 from datetime import date
 from sqlalchemy import func
+from exceptions.task_exceptions import *
 
 def criar_task(task_schema ,session:Session,user:Users):
     if task_schema.title=="":
@@ -27,14 +28,14 @@ def criar_task(task_schema ,session:Session,user:Users):
         ).scalar()
 
     if task_count>=5:
-        raise ValueError("Limite de tarefas atingido")
+        raise LimiteTasksAtingido()
     
     if task_schema.priority==EnumPriority.high and task_high_count>=2:
-        raise ValueError("Limite de tarefas high atingido")
+        raise LimiteHighAtingido()
     
 
     if task_schema.due_date and task_schema.due_date <= date.today():
-        raise ValueError("Datas devem ser no futuro")
+        raise DataInvalida()
 
     new_task=Task(title=task_schema.title,
                   description=task_schema.description,
@@ -51,23 +52,20 @@ def criar_task(task_schema ,session:Session,user:Users):
 
 
 def ver_tarefas_listas(user,session:Session):
-    task = session.query(Task).filter(Task.user_id==user.id).all()# type: ignore
-    if not task:
-        raise ValueError("Nenhuma task criada")
-    return task
+    return session.query(Task).filter(Task.user_id == user.id).all() # type: ignore
 
 def ver_tarefa_id(id_task,session:Session,user):
     task = session.query(Task).filter(Task.id==id_task, Task.user_id==user.id).first()# type: ignore
     if not task:
-        raise ValueError("Task não encontrada")
+        raise TaskNaoEncontrada()
     return task
 
 def editar_tarefa_id(id_task,session,user,task_schema_update):
     task = ver_tarefa_id(id_task,session,user)
 
     update_data = task_schema_update.dict(exclude_unset=True)
-    if task.status.order()>task_schema_update.status.order():
-        raise ValueError("Não é permitido retroceder")
+    if  task_schema_update.status and task.status.order()>task_schema_update.status.order():
+        raise StatusRetrocesso()
 
     for campo,valor in update_data.items():
         setattr(task,campo,valor)
@@ -79,7 +77,7 @@ def editar_tarefa_id(id_task,session,user,task_schema_update):
 def excluir_tarefa_id(id_task,session:Session,user):
     task = ver_tarefa_id(id_task,session,user)
     
-    
+
     session.delete(task)
     session.commit()
     return task
